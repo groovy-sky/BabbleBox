@@ -12,11 +12,12 @@ if openai.api_key is None:
 openai.api_base = os.getenv('OPENAI_API_BASE', 'https://api.openai.com')
 openai.api_version = os.getenv('OPENAI_API_VERSION', 'v1')
 model = os.getenv('OPENAI_MODEL', 'gpt-3.5-turbo')
+engine = os.getenv('OPENAI_ENGINE', 'davinci')
 CONVERSATIONS_DIR = os.getenv('CONVERSATIONS_DIR', 'conversations')
 openai.api_type = "azure"
 
 parameters = {
-    'max_tokens': 150,
+    'max_tokens': 2000,
     'temperature': 0.6,
     'top_p': 1,
     'frequency_penalty': 0.0,
@@ -45,10 +46,9 @@ def continue_conversation(conversation):
             return
         elif message.lower() == 'q':
             sys.exit(0)
-        conversation['messages'].append({"role": "system", "content": "You start a new session."})
         conversation['messages'].append({"role": "user", "content": message})
         response = openai.ChatCompletion.create(
-            engine="gpt4",
+            engine=engine,
             model=model, 
             messages=conversation['messages'],
             max_tokens=parameters['max_tokens'],
