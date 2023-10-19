@@ -13,12 +13,12 @@ openai.api_base = os.getenv('OPENAI_API_BASE', 'https://api.openai.com')
 openai.api_version = os.getenv('OPENAI_API_VERSION', 'v1')
 model = os.getenv('OPENAI_MODEL', 'gpt-3.5-turbo')
 CONVERSATIONS_DIR = os.getenv('CONVERSATIONS_DIR', 'conversations')
+openai.api_type = "azure"
 
 parameters = {
     'max_tokens': 150,
     'temperature': 0.6,
     'top_p': 1,
-    'stop_sequences': ['\n'],
     'frequency_penalty': 0.0,
     'presence_penalty': 0.0,
 }
@@ -48,14 +48,14 @@ def continue_conversation(conversation):
         conversation['messages'].append({"role": "system", "content": "You start a new session."})
         conversation['messages'].append({"role": "user", "content": message})
         response = openai.ChatCompletion.create(
+            engine="gpt4",
             model=model, 
             messages=conversation['messages'],
             max_tokens=parameters['max_tokens'],
             temperature=parameters['temperature'],
             top_p=parameters['top_p'],
             frequency_penalty=parameters['frequency_penalty'],
-            presence_penalty=parameters['presence_penalty'],
-            stop_sequences=parameters['stop_sequences']
+            presence_penalty=parameters['presence_penalty']
         )
         print(colored(f"AI (used tokens: {response['usage']['total_tokens']}): ", "green"), response['choices'][0]['message']['content'])
         save_conversation(conversation)
